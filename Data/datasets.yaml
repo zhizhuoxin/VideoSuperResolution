@@ -5,7 +5,9 @@
 
 ---
 # Add root dir to dataset. Take effect on all patterns below.
-Root: /mnt/data/datasets
+#Root: /mnt/data/datasets
+#Root: /home/shixinsong/Desktop/MIT/6.8300/VideoSuperResolution/.vsr/datasets
+Root: /workspace/vimeo-download/dataset
 # Collect your dataset directory and name them!
 Path:
     91-IMAGE: 91-image/
@@ -28,6 +30,13 @@ Path:
     YOTRAIN-LR[video]: youku/train/lr/png
     YOVAL-HR[video]: youku/val/hr/png
     YOVAL-LR[video]: youku/val/lr/png
+    VIMEO-90k-00001[video]: vimeo_90k_00001/sequences/00001
+    VIMEO-90k-1[video]: vimeo_90k_1/vimeo_settuplet_1/sequences
+    VIMEO-90k-QUICK-TEST[video]: vimeo_90k_quick_test
+    VIMEO-90k-1-TRAIN[video]: vimeo_90k_1/vimeo_settuplet_1/train
+    VIMEO-90k-1-VAL[video]: vimeo_90k_1/vimeo_settuplet_1/other
+    VIMEO-90k-1-TEST[video]: vimeo_90k_1/vimeo_settuplet_1/test
+    UDM10[video]: UDM10/GT
 
 # bind datasets to a name, called in scripts
 Dataset:
@@ -78,3 +87,16 @@ Dataset:
         val:
             hr: YOVAL-HR
             lr: YOVAL-LR
+
+    VIMEO-90K-00001[video]:
+        train: [VIMEO-90k-00001]
+        val: [VIMEO-90k-00001]
+        test: [VIMEO-90k-QUICK-TEST]
+
+    VIMEO-90K-1[video]:
+        train: [ VIMEO-90k-1-TRAIN ]
+        val: [ VIMEO-90k-1-VAL ]
+        test: [ VIMEO-90k-1-TEST ]
+
+    UDM10[video]:
+        test: [UDM10]

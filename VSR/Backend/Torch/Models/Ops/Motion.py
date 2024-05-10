@@ -49,7 +49,8 @@ class STN(nn.Module):
       f"Shape mis-match: {flow.shape} != {mesh.shape}"
     mesh = mesh + flow
     return F.grid_sample(inputs, mesh,
-                         mode=self.mode, padding_mode=self.padding_mode)
+                         mode=self.mode, padding_mode=self.padding_mode,
+                         align_corners=True)
 
 
 class STTN(nn.Module):

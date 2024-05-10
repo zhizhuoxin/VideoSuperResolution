@@ -71,16 +71,18 @@ class EpochIterator:
     self.depth = shape[1]
     self.count = 0
     self.cache = caching
-    t = len(self.loader.data['hr'])
-    frame_nums = [len(i) for i in self.loader.data['hr']]
-    temporal_padding = not shuffle
+    t = len(self.loader.data['hr']) # num of videos
+    frame_nums = [len(i) for i in self.loader.data['hr']] # frame num of each video
+    # print("shuffle", shuffle, "depth", self.depth, "t", t, "frame_nums", frame_nums)
+    temporal_padding = not shuffle and (self.depth != -1)
     self.index = []
     for i in range(t):
       depth = self.depth if self.depth >= 0 else len(self.loader.data['hr'][i])
       idx_ = [(i, np.array([j + x for x in range(depth)])) for j in
               range(-(depth // 2), frame_nums[i] - (depth // 2))]
       d2_ = depth // 2
-      self.index += idx_ if temporal_padding or d2_ == 0 else idx_[d2_: -d2_]
+      r_ = frame_nums[i] - depth + 1
+      self.index += idx_ if temporal_padding or d2_ == 0 else idx_[d2_:d2_ + r_]
     self.steps = steps if steps >= 0 else len(self.index) // shape[0]
     while len(self.index) < self.steps * shape[0] and self.index:
       self.index += self.index
@@ -111,7 +113,11 @@ class EpochIterator:
       d[d < 0] = 0
       d[d >= len(hr)] = len(hr) - 1
       name = self.loader.data['names'][i]
-      hr2 = np.asarray(hr, dtype=object)[d]
+      tmp = np.empty(len(hr), dtype=object)
+      for i, x in enumerate(hr):
+        tmp[i] = x
+      hr2 = tmp[d]
+      # hr2 = np.asarray(hr, dtype=object)[d]
       if not self.loader.cache_map.get(f'hr-{name}-{i}-{d}'):
         for fn in cb_hr[0]:
           hr2 = [fn(img) for img in hr2]
@@ -120,7 +126,11 @@ class EpochIterator:
           self.loader.data['hr'][i] = hr2
           self.loader.cache_map[f'hr-{name}-{i}-{d}'] = True
           LOG.debug(f"Caching hr-{name}-{i}-{d}...")
-      lr2 = np.asarray(lr, dtype=object)[d]
+      tmp = np.empty(len(lr), dtype=object)
+      for i, x in enumerate(lr):
+        tmp[i] = x
+      lr2 = tmp[d]
+      # lr2 = np.asarray(lr, dtype=object)[d]
       if not self.loader.cache_map.get(f'lr-{name}-{i}-{d}'):
         for fn in cb_lr[0]:
           lr2 = [fn(img) for img in lr2]

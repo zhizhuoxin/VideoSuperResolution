@@ -127,7 +127,7 @@ class VggFeatureLoss(nn.Module):
   def __init__(self, layer_names, before_relu=False, external_weights=None):
     super(VggFeatureLoss, self).__init__()
     if not external_weights:
-      net = torchvision.models.vgg19(pretrained=True)
+      net = torchvision.models.vgg19(weights=torchvision.models.VGG19_Weights.DEFAULT)
     else:
       net = torchvision.models.vgg19()
       # TODO map_location=?
