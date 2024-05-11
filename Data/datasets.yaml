@@ -33,6 +33,9 @@ Path:
     VIMEO-90k-00001[video]: vimeo_90k_00001/sequences/00001
     VIMEO-90k-1[video]: vimeo_90k_1/vimeo_settuplet_1/sequences
     VIMEO-90k-QUICK-TEST[video]: vimeo_90k_quick_test
+    VIMEO-90k-00001-TRAIN[video]: vimeo-90k-00001/train
+    VIMEO-90k-00001-VAL[video]: vimeo-90k-00001/other
+    VIMEO-90k-00001-TEST[video]: vimeo-90k-00001/test
     VIMEO-90k-1-TRAIN[video]: vimeo-90k-1/vimeo_settuplet_1/train
     VIMEO-90k-1-VAL[video]: vimeo-90k-1/vimeo_settuplet_1/other
     VIMEO-90k-1-TEST[video]: vimeo-90k-1/vimeo_settuplet_1/test
@@ -88,10 +91,15 @@ Dataset:
             hr: YOVAL-HR
             lr: YOVAL-LR
 
+#    VIMEO-90K-00001[video]:
+#        train: [VIMEO-90k-00001]
+#        val: [VIMEO-90k-00001]
+#        test: [VIMEO-90k-QUICK-TEST]
+
     VIMEO-90K-00001[video]:
-        train: [VIMEO-90k-00001]
-        val: [VIMEO-90k-00001]
-        test: [VIMEO-90k-QUICK-TEST]
+        train: [ VIMEO-90k-00001-TRAIN ]
+        val: [ VIMEO-90k-00001-VAL ]
+        test: [ VIMEO-90k-00001-TEST ]
 
     VIMEO-90K-1[video]:
         train: [ VIMEO-90k-1-TRAIN ]
