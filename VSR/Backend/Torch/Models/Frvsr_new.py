@@ -12,7 +12,7 @@ from torch import nn
 
 from .Model import SuperResolution
 from .Ops.Blocks import RB
-from .Ops.Loss import total_variance
+from .Ops.Loss import total_variance, VggFeatureLoss
 from .Ops.Motion import Flownet, STN
 from .Ops.Scale import SpaceToDepth, Upsample
 from ..Framework.Summary import get_writer
@@ -58,12 +58,16 @@ class FRNet(nn.Module):
     return y, hw, lw, flow2
 
 
-class FRVSR(SuperResolution):
+class FRVSRNew(SuperResolution):
   def __init__(self, scale, channel, **kwargs):
-    super(FRVSR, self).__init__(scale, channel, **kwargs)
-    self.frvsr = FRNet(channel, scale, kwargs.get('n_rb', 10))
+    super(FRVSRNew, self).__init__(scale, channel, **kwargs)
+    self.frvsrnew = FRNet(channel, scale, kwargs.get('n_rb', 10))
     self.adam = torch.optim.Adam(self.trainable_variables(), 1e-4)
-    self.w = kwargs.get('weights', [1, 1, 1e-3])
+    self.w = kwargs.get('weights', [1, 1, 1e-3, 0.006, 0.006])
+
+    feature_lists = ['block5_conv4']
+    self.feature = [VggFeatureLoss(feature_lists, True)]
+    self.feature[0].cuda()
 
   def train(self, inputs, labels, learning_rate=None):
     frames = [x.squeeze(1) for x in inputs[0].split(1, dim=1)]
@@ -74,26 +78,43 @@ class FRVSR(SuperResolution):
     total_loss = 0
     flow_loss = 0
     image_loss = 0
+    feat_sr_hr_loss = 0
+    feat_lrw_lr_loss = 0
     last_lr = frames[0]
     last_sr = upsample(last_lr, self.scale)
     for lr, hr in zip(frames, labels):
-      sr, hrw, lrw, flow = self.frvsr(lr, last_lr, last_sr.detach())
+      sr, hrw, lrw, flow = self.frvsrnew(lr, last_lr, last_sr.detach())
       last_lr = lr
       last_sr = sr
       l2_image = F.mse_loss(sr, hr)
       l2_warp = F.mse_loss(lrw, lr)
       tv_flow = total_variance(flow)
-      loss = l2_image * self.w[0] + l2_warp * self.w[1] + tv_flow * self.w[2]
+
+      self.feature[0].eval()
+      feat_sr = self.feature[0](sr)[0]
+      feat_hr = self.feature[0](hr)[0].detach()
+      feat_sr_hr = F.mse_loss(feat_sr, feat_hr)
+
+      self.feature[0].eval()
+      feat_lrw = self.feature[0](lrw)[0]
+      feat_lr = self.feature[0](lr)[0].detach()
+      feat_lrw_lr = F.mse_loss(feat_lrw, feat_lr)
+
+      loss = l2_image * self.w[0] + l2_warp * self.w[1] + tv_flow * self.w[2] + feat_sr_hr * self.w[3] + feat_lrw_lr * self.w[4]
       self.adam.zero_grad()
       loss.backward()
       self.adam.step()
       total_loss += loss.detach()
       image_loss += l2_image.detach()
       flow_loss += l2_warp.detach()
+      feat_sr_hr_loss += feat_sr_hr.detach()
+      feat_lrw_lr_loss += feat_lrw_lr.detach()
     return {
       'total_loss': total_loss.cpu().numpy() / len(frames),
       'image_loss': image_loss.cpu().numpy() / len(frames),
       'flow_loss': flow_loss.cpu().numpy() / len(frames),
+      'feat_sr_hr_loss': feat_sr_hr_loss.cpu().numpy() / len(frames),
+      'feat_lrw_lr_loss': feat_lrw_lr_loss.cpu().numpy() / len(frames),
     }
 
   def eval(self, inputs, labels=None, **kwargs):
@@ -108,7 +129,7 @@ class FRVSR(SuperResolution):
     last_sr = upsample(last_lr, self.scale)
     for lr in frames:
       lr = pad_if_divide(lr, 8, 'reflect')
-      sr, _, _, _ = self.frvsr(lr, last_lr, last_sr)
+      sr, _, _, _ = self.frvsrnew(lr, last_lr, last_sr)
       last_lr = lr.detach()
       last_sr = sr.detach()
       sr = sr[..., slice_h, slice_w]

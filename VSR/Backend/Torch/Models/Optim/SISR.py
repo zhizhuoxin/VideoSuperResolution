@@ -215,3 +215,21 @@ class PerceptualOptimizer(L1Optimizer):
       self.optd.step()
       log.update(disc=disc_loss.detach().cpu().numpy())
     return log
+
+  def get_adv_loss(self, sr, hr):
+    for p in self.dnet.parameters():
+      p.requires_grad = False
+    fake = self.dnet(sr)
+    real = self.dnet(hr).detach()
+    gen_loss = self.gen_cri(fake, real)
+    return gen_loss
+
+  def update_disc(self, sr, hr):
+    for p in self.dnet.parameters():
+      p.requires_grad = True
+    disc_fake = self.dnet(sr.detach())
+    disc_real = self.dnet(hr)
+    disc_loss = self.disc_cri(disc_fake, disc_real)
+    self.optd.zero_grad()
+    disc_loss.backward()
+    self.optd.step()

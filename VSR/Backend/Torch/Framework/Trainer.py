@@ -125,6 +125,9 @@ class SRTrainer(Env):
     self._restore(config.epoch, v.map_location)
     v.mean_metrics = {}
     v.loader = loader
+    print("batch_shape", v.batch_shape)
+    print("val_steps", v.val_steps)
+    print("traced_val", v.traced_val)
     it = v.loader.make_one_shot_iterator(v.batch_shape, v.val_steps,
                                          shuffle=not v.traced_val,
                                          memory_limit=v.memory_limit,

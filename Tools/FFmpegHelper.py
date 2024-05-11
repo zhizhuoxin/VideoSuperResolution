@@ -51,7 +51,7 @@ def encode(file, work_dir):
   cmd += f' -bf {FLAGS.bf}'
   cmd += f' -qp {FLAGS.qp}'
   cmd += f' -f rawvideo {str(tmp_name)}'
-  # print(cmd)
+  print(cmd)
   subprocess.call(cmd.split(' '), stderr=subprocess.DEVNULL)
   return tmp_name, fmt
 
@@ -61,7 +61,7 @@ def decode(file, output_dir, name, fmt):
   output_name = output_dir / f'{name}_{FLAGS.qp}.{fmt}'
   cmd += f' -f rawvideo -pix_fmt {fmt}'
   cmd += f' {str(output_name)} -y'
-  # print(cmd)
+  print(cmd)
   subprocess.call(cmd.split(' '), stderr=subprocess.DEVNULL)
 
 
@@ -84,3 +84,7 @@ def main():
 
 if __name__ == '__main__':
   main()
+
+# ffmpeg -framerate 30 -i .vsr/datasets/vid4/original/calender/Frame\ %03d.png -c:v libx264 -crf 23 -pix_fmt yuv420p video_output/original/calendar.mp4
+# ffmpeg -framerate 30 -i Results/frvsr/VID4/calender/calender_id0000_%04d.png -c:v libx264 -crf 23 -pix_fmt yuv420p video_output/result/calendar.mp4
+

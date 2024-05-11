@@ -27,7 +27,8 @@ if sys.version_info.major == 3 and sys.version_info.minor < 6:
   print("Python version is required >=3.6!")
   exit(-1)
 
-_DEFAULT_DATASET_PATH = '/mnt/data/datasets'
+# _DEFAULT_DATASET_PATH = '/mnt/data/datasets'
+_DEFAULT_DATASET_PATH = '.vsr/datasets'
 _DEFAULT_DOWNLOAD_DIR = '.vsr/downloads'
 _DEFAULT_WEIGHTS_DIR = './Results'
 # Contact me if any of these links un-accessed
@@ -49,7 +50,7 @@ DATASETS = {
   # Google Drive File ID.
   # If you can't download from this file, visit url https://drive.google.com/open?id=<id>
   # paste the file id into position <id>.
-  'GOPRO_Large.zip': '1H0PIXvJH4c40pk7ou6nAwoxuR4Qh_Sa2',
+  'GOPRO_Large.zip': '1H0PIXvJH4c40pk7ou6nAwoxuR4Qh_Sa2', # https://drive.google.com/open?id=1H0PIXvJH4c40pk7ou6nAwoxuR4Qh_Sa2
   'MCL-V.rar': '1z41hdqR-bqNLcUWllPePzkfQW-I_A9ny',
   'vid4.zip': '1ogEdifL_krqJnFAHfGNqOSMuUg_Ud6fb',
 }
@@ -149,6 +150,10 @@ def download(name, url, path):
 
 
 def drive_download(name, url, path):
+  file_path = Path(path) / name
+  print(file_path)
+  if file_path.exists():
+    return file_path
   print(f"Google Drive Download API has been expired, "
         f"please download {name} from https://drive.google.com/open?id={url} directly."
         "\nFor more question, please message me at https://gitub.com/loseall.")
