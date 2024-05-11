@@ -3,7 +3,7 @@ frvsresrgan:
     scale: 4
     channel: 3
     depth: 7
-    weights: [1, 1, 1e-3, 0, 0]
+    weights: [1, 0.0001, 2e-8, 0.006, 0.001]
 
 batch_shape: [16, 7, 3, 32, 32]
 lr: 1.0e-4
