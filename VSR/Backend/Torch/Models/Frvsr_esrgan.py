@@ -13,7 +13,7 @@ from torch import nn
 from .Model import SuperResolution
 from .Ops.Blocks import RB, Activation, EasyConv2d, Rrdb
 from .Ops.Discriminator import PatchGAN, DCGAN
-from .Ops.Loss import total_variance, DiscriminatorLoss, GeneratorLoss, VggFeatureLoss
+from .Ops.Loss import total_variance, DiscriminatorLoss, GeneratorLoss, TVLoss, VggFeatureLoss
 from .Ops.Motion import Flownet, STN
 from .Ops.Scale import SpaceToDepth, Upsample
 from ..Framework.Summary import get_writer
@@ -104,6 +104,7 @@ class FRVSREsrgan(SuperResolution):
       # tricks: do not save weights of vgg
       feature_lists = kwargs.get('vgg_features', ['block5_conv4'])
       self.feature = [VggFeatureLoss(feature_lists, True)]
+      self.feature[0].cuda()
     if self.use_gan:
       # define D-net
       patch_size = kwargs.get("patch_size", 128)
