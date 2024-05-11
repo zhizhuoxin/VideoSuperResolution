@@ -33,9 +33,9 @@ Path:
     VIMEO-90k-00001[video]: vimeo_90k_00001/sequences/00001
     VIMEO-90k-1[video]: vimeo_90k_1/vimeo_settuplet_1/sequences
     VIMEO-90k-QUICK-TEST[video]: vimeo_90k_quick_test
-    VIMEO-90k-1-TRAIN[video]: vimeo_90k_1/vimeo_settuplet_1/train
-    VIMEO-90k-1-VAL[video]: vimeo_90k_1/vimeo_settuplet_1/other
-    VIMEO-90k-1-TEST[video]: vimeo_90k_1/vimeo_settuplet_1/test
+    VIMEO-90k-1-TRAIN[video]: vimeo-90k-1/vimeo_settuplet_1/train
+    VIMEO-90k-1-VAL[video]: vimeo-90k-1/vimeo_settuplet_1/other
+    VIMEO-90k-1-TEST[video]: vimeo-90k-1/vimeo_settuplet_1/test
     UDM10[video]: UDM10/GT
 
 # bind datasets to a name, called in scripts
