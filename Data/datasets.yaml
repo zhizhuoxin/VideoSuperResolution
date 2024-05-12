@@ -39,6 +39,9 @@ Path:
     VIMEO-90k-1-TRAIN[video]: vimeo-90k-1/vimeo_settuplet_1/train
     VIMEO-90k-1-VAL[video]: vimeo-90k-1/vimeo_settuplet_1/other
     VIMEO-90k-1-TEST[video]: vimeo-90k-1/vimeo_settuplet_1/test
+    VIMEO-90k-TRAIN[video]: merged-vimeo-90k/train
+    VIMEO-90k-VAL[video]: merged-vimeo-90k/other
+    VIMEO-90k-TEST[video]: merged-vimeo-90k/test
     UDM10[video]: UDM10/GT
 
 # bind datasets to a name, called in scripts
@@ -105,6 +108,11 @@ Dataset:
         train: [ VIMEO-90k-1-TRAIN ]
         val: [ VIMEO-90k-1-VAL ]
         test: [ VIMEO-90k-1-TEST ]
+
+    VIMEO-90K[video]:
+        train: [ VIMEO-90k-TRAIN ]
+        val: [ VIMEO-90k-VAL ]
+        test: [ VIMEO-90k-TEST ]
 
     UDM10[video]:
         test: [UDM10]

@@ -186,6 +186,8 @@ class FRVSREsrgan(SuperResolution):
       'total_loss': total_loss.cpu().numpy() / len(frames),
       'image_loss': image_loss.cpu().numpy() / len(frames),
       'flow_loss': flow_loss.cpu().numpy() / len(frames),
+      'feat_loss': feat_loss.cpu().numpy() / len(frames),
+      'gan_loss': gan_loss.cpu().numpy() / len(frames),
     }
 
   def eval(self, inputs, labels=None, **kwargs):

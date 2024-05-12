@@ -79,7 +79,7 @@ class EpochIterator:
     for i in range(t):
       depth = self.depth if self.depth >= 0 else len(self.loader.data['hr'][i])
       idx_ = [(i, np.array([j + x for x in range(depth)])) for j in
-              range(-(depth // 2), frame_nums[i] - (depth // 2))]
+              range(-depth + 1, frame_nums[i] - depth + 1)]
       d2_ = depth // 2
       r_ = frame_nums[i] - depth + 1
       self.index += idx_ if temporal_padding or d2_ == 0 else idx_[d2_:d2_ + r_]
