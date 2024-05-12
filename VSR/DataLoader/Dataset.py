@@ -2,7 +2,7 @@
 #  Author: Wenyi Tang
 #  Email: wenyitang@outlook.com
 #  Update: 2020 - 2 - 7
-
+import glob
 import re
 from concurrent import futures
 from pathlib import Path
@@ -121,7 +121,11 @@ class Dataset(object):
         nodes.append(folder)
       fn_glob = Path.rglob if self.recursive else Path.glob
       for pat in self.glob_patterns:
-        nodes += list(fn_glob(folder, pat))
+        folder_list = list(fn_glob(folder, pat))
+        for f in folder_list:
+          if f.is_dir():
+            nodes.extend(list(f.iterdir()))
+        nodes += folder_list
       if self.inc_patterns:
         nodes = filter(_inc, nodes)
       files += list(filter(_exc, filter(_supported_suffix, nodes)))
