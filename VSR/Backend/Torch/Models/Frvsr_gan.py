@@ -64,7 +64,7 @@ class FRVSRGan(SuperResolution):
     super(FRVSRGan, self).__init__(scale, channel, **kwargs)
     self.frvsrgan = FRNet(channel, scale, kwargs.get('n_rb', 10))
     self.adam = torch.optim.Adam(self.trainable_variables(), 1e-4)
-    self.w = kwargs.get('weights', [1, 1, 1e-3])
+    self.w = kwargs.get('weights', [1, 1, 1e-3, 0.006, 0.001])
 
     self.gan = ESRGAN(
       scale=scale,
@@ -91,7 +91,7 @@ class FRVSRGan(SuperResolution):
     image_loss = 0
     gan_loss = 0
     feat_sr_hr_loss = 0
-    feat_lrw_lr_loss = 0
+    # feat_lrw_lr_loss = 0
     last_lr = frames[0]
     last_sr = upsample(last_lr, self.scale)
     for lr, hr in zip(frames, labels):
@@ -108,13 +108,13 @@ class FRVSRGan(SuperResolution):
       feat_hr = self.feature[0](hr)[0].detach()
       feat_sr_hr = F.mse_loss(feat_sr, feat_hr)
 
-      self.feature[0].eval()
-      feat_lrw = self.feature[0](lrw)[0]
-      feat_lr = self.feature[0](lr)[0].detach()
-      feat_lrw_lr = F.mse_loss(feat_lrw, feat_lr)
+      # self.feature[0].eval()
+      # feat_lrw = self.feature[0](lrw)[0]
+      # feat_lr = self.feature[0](lr)[0].detach()
+      # feat_lrw_lr = F.mse_loss(feat_lrw, feat_lr)
 
       loss = (l2_image * self.w[0] + l2_warp * self.w[1] + tv_flow * self.w[2] +
-              one_gan_loss * self.w[3] + feat_sr_hr * self.w[4] + feat_lrw_lr * self.w[5])
+              one_gan_loss * self.w[3] + feat_sr_hr * self.w[4])
 
       self.adam.zero_grad()
       loss.backward()
@@ -126,7 +126,7 @@ class FRVSRGan(SuperResolution):
       flow_loss += l2_warp.detach()
       gan_loss += one_gan_loss.detach()
       feat_sr_hr_loss += feat_sr_hr.detach()
-      feat_lrw_lr_loss += feat_lrw_lr.detach()
+      # feat_lrw_lr_loss += feat_lrw_lr.detach()
 
     return {
       'total_loss': total_loss.cpu().numpy() / len(frames),
@@ -134,7 +134,7 @@ class FRVSRGan(SuperResolution):
       'flow_loss': flow_loss.cpu().numpy() / len(frames),
       'gan_loss': gan_loss.cpu().numpy() / len(frames),
       'feat_sr_hr_loss': feat_sr_hr_loss.cpu().numpy() / len(frames),
-      'feat_lrw_lr_loss': feat_lrw_lr_loss.cpu().numpy() / len(frames),
+      # 'feat_lrw_lr_loss': feat_lrw_lr_loss.cpu().numpy() / len(frames),
     }
 
   def eval(self, inputs, labels=None, **kwargs):
