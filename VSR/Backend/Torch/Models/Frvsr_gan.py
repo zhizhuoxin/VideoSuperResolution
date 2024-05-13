@@ -74,7 +74,7 @@ class FRVSRGan(SuperResolution):
       patch_size=128,
     )
     self.gan.cuda()
-    self.gan.load("/home/shixinsong/Desktop/MIT/6.8300/VideoSuperResolution/Results/RRDB_GAN.pth")
+    self.gan.load("/workspace/VideoSuperResolution/Results/RRDB_GAN.pth")
 
     feature_lists = ['block5_conv4']
     self.feature = [VggFeatureLoss(feature_lists, True)]
