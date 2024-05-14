@@ -52,7 +52,7 @@ DATASETS = {
   # paste the file id into position <id>.
   'GOPRO_Large.zip': '1H0PIXvJH4c40pk7ou6nAwoxuR4Qh_Sa2', # https://drive.google.com/open?id=1H0PIXvJH4c40pk7ou6nAwoxuR4Qh_Sa2
   'MCL-V.rar': '1z41hdqR-bqNLcUWllPePzkfQW-I_A9ny',
-  'vid4.zip': '1ogEdifL_krqJnFAHfGNqOSMuUg_Ud6fb',
+  'vid4.zip': '1ogEdifL_krqJnFAHfGNqOSMuUg_Ud6fb', # https://drive.google.com/open?id=1ogEdifL_krqJnFAHfGNqOSMuUg_Ud6fb
 }
 WEIGHTS = {
   'tensorflow': {
